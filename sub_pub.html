@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>发布-订阅</title>
+</head>
+<body>
+	
+</body>
+<script type="text/javascript">
+	var shoeObj = {}; //定义发布者
+	shoeObj.list = []; //缓存列表 存放订阅者回调函数
+
+	//增加订阅者
+	shoeObj.listen = function(key,cb) {
+		if(!this.list[key]) {
+			//如果还没有订阅过此消息，给该消息创建一个缓存列表
+			this.list[key] = [];
+		}
+		this.list[key].push(cb);//消息二维列表
+	}
+
+	//发布消息
+	shoeObj.trigger = function() {
+		var key = Array.prototype.shift.call(arguments);//取出消息类型名称
+		var cbs = this.list[key];
+
+		//如果没有订阅者订阅此消息的话，则返回
+		if(!cbs || cbs.length === 0){
+			return;
+		}
+
+		for(var i=0,cb; cb = cbs[i++];){
+			cb.apply(this,arguments);//arguments是发布消息时附加的参数
+		}
+	}
+	//小红订阅如下消息
+	shoeObj.listen('red',function(size){//订阅自己的消息 red
+		console.log('红色的尺寸：' + size);
+	});
+
+	shoeObj.listen('white',function(size){//订阅自己的消息 white
+		console.log('白色的尺寸：' + size);
+	});
+	shoeObj.trigger('red','20');//发布red消息
+	shoeObj.trigger('white','21');//发white消息
+
+
+	//发布订阅模式代码封装
+	let EVENT = {
+		list:{},
+		listen:function(key,cb) {
+			if(!this.list[key]){
+				this.list[key] = [];
+			}
+
+			this.list[key].push(cb);
+		},
+		trigger:function() {
+			let key = Array.prototype.shift.call(arguments);
+			let cbs = this.list[key];
+
+			if(!cbs || cbs.length === 0) return;
+			cbs.forEach(cb => {
+				cb(...arguments)
+			});
+		},
+		remove:function(key,cb){
+			let cbs = this.list[key];
+			//如果key对应的消息没有订阅的话，则返回
+			if(!cbs){
+				return false;
+			}
+
+			//如果没有传入具体的回调函数，则表示需要取消key对应消息的所有订阅
+			if(!cb){
+				cb&&(cbs.length = 0);
+			}else{
+				for(let i = cbs.length-1; i >= 0; i--){
+					let _cb = cbs[i];
+					if(_cb === cb){
+						cbs.splice(i,1);//删除订阅者的回调函数
+					}
+				}
+			}
+		}
+	}
+	//定义一个initEvent函数，这个函数使所有的普通对象都具有发布功能
+	let initEvent = (obj) => {
+		for(let i in EVENT){
+			obj[i] = EVENT[i];
+		}
+	}
+	//创建一个发布者
+	let phoneObj = {};
+	initEvent(phoneObj);
+
+	//订阅者
+	phoneObj.listen('iphone8',fn1=function(arg){
+		let { size } = arg;
+		console.log('iphone8 size: '+ size + ' inch');
+	});
+	phoneObj.listen('iphoneX',fn2=function(arg){
+		let { price } = arg;
+		console.log('iphoneX price: '+ price + ' yuan');
+	});
+
+	phoneObj.remove("iphone8",fn1);
+	//发布
+	phoneObj.trigger('iphone8',{size:'5.0',price:5888});
+	phoneObj.trigger('iphoneX',{size:'5.7',price:9888});
+
+
+	//全局创建一个订阅发布对象
+	const Event = (function(){
+		var list = {},listen,trigger,remove;
+		listen = function(key,cb){
+			if(!list[key]){
+				list[key]=[];
+			}
+			list[key].push(cb);
+		};
+		trigger = function(){
+			let key = Array.prototype.shift.call(arguments),
+				cbs = list[key];
+			cbs.forEach(cb => cb(...arguments));	
+		};
+		remove = function(key,cb){
+			let cbs = list[key];
+			if(!cbs) return false;
+
+			if(!cb){
+				cbs&&(cbs.length = 0);
+			}else{
+				let i = cbs.length;
+				while(i--){
+					if(cbs[i] === cb){
+						cbs.splice(i,1);
+					}
+				}
+			}
+		};
+
+		return {
+			listen,
+			trigger,
+			remove
+		}
+	})();
+
+	Event.listen('phone',key1 = function(args){
+		let { size,color } = args;
+		console.log('phone:',size,color);
+	});
+	Event.listen('watch',key2 = function(args){
+		let { price,color } = args;
+		console.log('watch:',price,color);
+	});
+	Event.listen('watch',key3 = function(args){
+		let { color } = args;
+		console.log('watch:',color);
+	});
+	Event.remove('watch',key2);
+	Event.trigger('phone',{color:'white',size:'4.7',price:'4800'});
+	Event.trigger('watch',{color:'red',price:'2800'});
+</script>
+</html>
