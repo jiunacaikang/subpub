@@ -69,11 +69,11 @@
       <span class="close gray" @click="closeMsgBox">+</span>
       <div class="title" v-show="subType === 'add' || msgType">{{msgType === 'listen' ? '订阅' : '发布'}}'{{selectedPuber.name}}'的消息</div>
       <div class="title" v-show="subType === 'remove'">解除对'{{selectedPuber.name}}'消息的订阅</div>
-      <select v-model="msg" :disabled="!!msgIpt">
+      <select v-model="msg" :class="!!msgIpt ? 'disabled' : ''" :disabled="!!msgIpt">
         <option value="" selected>选择已有消息</option> 
         <option v-for="(value, key, index) in selectedPuber.messageMap" :value="key" :key="index">{{key}}</option>
       </select>
-      <input type="text" v-model="msgIpt" :disabled="!!msg" placeholder="手动输入消息" maxlength="6">
+      <input type="text" v-model="msgIpt" :class="!!msg ? 'disabled' : ''" :disabled="!!msg" placeholder="手动输入消息" maxlength="6">
       <div class="btn-group btns">
         <button @click="closeMsgBox">取消</button>
         <button class="success" @click="msgConfirm">确定</button>

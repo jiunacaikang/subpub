@@ -62,6 +62,11 @@ select, input {
   margin-bottom: 20px;
 }
 
+select.disabled, input.disabled {
+  cursor: no-drop;
+  opacity: 0.3;
+}
+
 input {
   padding-left: 5px;
 }
