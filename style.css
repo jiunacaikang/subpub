@@ -376,6 +376,7 @@ button.error:hover {
 .suber-msg-wrapper .suber-msg-list {
   background-color: snow;
   height: 410px;
+  position: relative;
 }
 
 
@@ -406,7 +407,7 @@ button.error:hover {
 }
 
 
-.msg::after, .msg::before, .watcher-wrapper::after, .watcher-wrapper::before {
+.msg::after, .msg::before, .puber-wraper::after, .suber-msg-list::before{
   content: '';
   position: absolute;
   width: 2px;
@@ -417,7 +418,7 @@ button.error:hover {
   transform: translateX(-50%);
 }
 
-.msg::before {
+.msg::before,.suber-msg-list::before {
   top: -10px;
 }
 

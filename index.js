@@ -16,9 +16,11 @@ const $selectWatcher = function (puber, suber) {
   return $(`.watcher-${puber.id}`).find(`.suber-${suber.id}`)
 }
 //闪动
-const $blink = function (selector) {
+const $blink = function (selector, cb) {
   $(selector).fadeOut(duration, function(){
-    $(this).fadeIn(duration);
+    $(this).fadeIn(duration, function () {
+      cb && cb();
+    });
   });
 }
 
@@ -110,8 +112,8 @@ new Vue({
       this.closeMsgBox();
       this.resetSuber();
       this.$nextTick(() => {
-        $blink($selectSuber(puber, msg, suber))
         $blink($selectWatcher(puber, suber))
+        $blink($selectSuber(puber, msg, suber))
       })
     },
 
@@ -181,7 +183,7 @@ new Vue({
      */
     fastPublish(puber, msg) {
       let value = prompt("请输入要发布的内容")
-      value !== null && this.doPublish(puber, msg, { value })
+      value !== null && setTimeout(() => this.doPublish(puber, msg, { value }), duration)
     },
     /**
      * 执行发布消息
@@ -193,9 +195,11 @@ new Vue({
       info = Object.assign({ _puberName: puber.name, _msgName: msg, _timePublish: Date.now() }, info)
       
       //若观察者列表有数据 就闪动表示收到消息
-      puber.watcherList.length && $blink($selcetSuberWrapper(puber))
-
-      msg && $blink($selcetSuberWrapper(puber, msg))
+      if (puber.watcherList.length) {
+        $blink($selcetSuberWrapper(puber), () => msg && $blink($selcetSuberWrapper(puber, msg)));
+      } else {
+        msg && $blink($selcetSuberWrapper(puber, msg));
+      }
       
       puber.publish(msg, info);
       this.closeMsgBox();
