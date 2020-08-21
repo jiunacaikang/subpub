@@ -1,0 +1,515 @@
+* {
+  padding: 0;
+  margin: 0;
+  outline: none;
+  font-size: 12px;
+}
+body{
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
+}
+li {
+  list-style:none;
+}
+#app {
+  width: 1100px;
+  margin: 0 auto;
+}
+
+.fl {
+  float: left;
+}
+
+.fr {
+  float: right;
+}
+
+.clearfix:after {
+  content: "."; 
+  display: block; 
+  height: 0; 
+  clear: both; 
+  visibility: hidden;  
+}
+
+.blur {
+  filter: blur(5px);
+}
+
+.mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, .3);
+  display: none;
+}
+
+select, input {
+  width: 200px;
+  height: 40px;
+  border-radius: 5px;
+  font-size: 12px;
+  border: 1px solid #000;
+  border-radius: 5px;
+  color: #000;
+  margin: 0 auto;
+  display: block;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+}
+
+input {
+  padding-left: 5px;
+}
+
+button {
+  min-width: 80px;
+  padding: 0 5px;
+  height: 30px;
+  line-height: 30px;
+  cursor: pointer;
+  border-radius: 3px;
+  background: #aaa;
+  color: #fff;
+  border: none;
+  transition: all 0.2s;
+}
+
+.close {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  font-size: 26px;
+  background: #fff;
+  color: rgba(0, 0, 0, .3);
+  line-height: 18px;
+  top: 15px;
+  right: 10px;
+  border-radius: 50%;
+  transform: rotate(45deg);
+  opacity: 0.7;
+  transition: all 0.2s;
+  cursor: pointer;
+  box-shadow: rgba(0, 0, 0, 0.1);
+}
+
+.close.gray {
+  background:rgba(0, 0, 0, 0.5);
+  color: #fff;
+}
+
+.close:hover {
+  opacity: 1;
+}
+
+button:hover {
+  background: #666;
+}
+
+button.small {
+  min-width: 50px;
+  max-width: 60px;
+  height: 20px;
+  line-height: 20px;
+  overflow: hidden;
+}
+
+button.large {
+  min-width: 100px;
+  height: 40px;
+  line-height: 40px;
+}
+
+button.primary {
+  background: #b3d8ff;
+  color: #409eff;
+}
+
+button.primary:hover {
+  background: #409eff;
+  color: #fff;
+}
+
+button.success {
+  background: #d5fcc0;
+  color: #65c933;
+}
+
+button.success:hover {
+  background: #65c933;
+  color: #fff;
+}
+
+button.error {
+  background: #fd9284;
+  color: red;
+}
+
+button.error:hover {
+  background: red;
+  color: #fff;
+}
+
+.btn-group {
+  text-align: center;
+}
+
+.btns {
+  margin: 15px auto;
+}
+
+.btns button {
+  margin: 0 10px;
+}
+
+/* 订阅者样式start */
+.suber-list {
+  width: 1100px;
+  height: 30px;
+  padding: 10px 0 30px 0;
+  margin: 10px 0;
+  border-radius: 3px;
+  background-color: snow;
+  text-align: center;
+  position: relative;
+}
+
+.suber-list .mask-tip {
+  width: 100%;
+  height: 100%;
+  padding-left: 10px;
+  box-sizing: border-box;
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: #fff;
+  text-align: left;
+  line-height: 30px;
+  font-size: 16px;
+  background-color: rgba(0, 0, 0, .3);
+}
+
+.suber-list .suber {
+  width: 80px;
+  height: 30px;
+  margin: 0 2px;
+  border-radius: 3px;
+  background-color: #ffcc5f;
+  display: inline-block;
+  position: relative;
+}
+
+.suber-list .suber .name{
+  width: 100%;
+  height: 30px;
+  line-height: 30px;
+  padding:0 3px;
+  color: #fff;
+  overflow: hidden;
+  box-sizing: border-box;
+  display: inline-block;
+}
+
+.suber-list .suber .btn-group {
+  width: 110px;
+  display: none;
+  position: absolute;
+  bottom: -25px;
+  left: -15px;
+  border-top: 6px solid transparent;
+}
+
+.suber-list .suber:hover .btn-group{
+  display: block;
+}
+/* 订阅者样式end */
+
+/* 发布者样式start */
+.puber-list {
+  border-radius: 3px;
+  text-align: center;
+}
+
+.puber-list .puber-wraper {
+  width: 80px;
+  height: 80px;
+  padding: 5px;
+  display: inline-block;
+  margin: 0 230px;
+  background-color: antiquewhite;
+  border-radius: 5px;
+  position: relative;
+}
+
+.puber-list .puber-wraper .puber {
+  width: 80px;
+  height: 80px;
+  color:#fff;
+  border-radius: 10px;
+  background-color: aqua;
+  overflow: hidden;
+  position: relative;
+}
+
+.puber-list .puber-wraper .puber button {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.puber-list .puber .name{
+  width: 100%;
+  height: 50px;
+  line-height: 50px;
+  display: inline-block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  overflow: hidden;
+  padding: 0 3px;
+  box-sizing: border-box;
+  transform: translate(-50%, -50%);
+}
+
+.puber-list .puber-wraper .puber .choice-bg {
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: pointer;
+}
+
+.puber-list .puber-wraper .puber .choice-bg .choice {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #fff;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border-radius: 50%;
+  box-sizing: border-box;
+  transition: all 0.2s;
+}
+
+.puber-list .puber-wraper .puber .choice-bg .choice.selected-add {
+  border-width: 5px;
+  background-color: rgb(0, 255, 0);
+}
+
+.puber-list .puber-wraper .puber .choice-bg .choice.selected-remove {
+  border-width: 5px;
+  background-color: red;
+}
+/* 发布者样式end */
+
+/* 发布者的监听者们start */
+.suber-msg-wrapper {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 540px;
+  height: 480px;
+  text-align: center;
+}
+
+.watcher-wrapper {
+  width: 100%;
+  height: 42px;
+  border-top: 2px solid #333;
+  border-bottom: 2px solid #333;
+  margin: 10px 0;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.watcher-wrapper .watcher-tips {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: #333;
+  width: 100%;
+  line-height: 42px;
+  z-index: -1;
+}
+
+.watcher-wrapper.light {
+  border-color: #1be03d;
+}
+
+.watcher-wrapper.light .watcher-tips {
+  color: #eee;
+}
+
+.watcher-list {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding-top: 3px;
+  text-align: center;
+}
+
+.watcher-list li {
+  display: inline-block;
+  width: 36px;
+  height: 36px;
+  margin: 0 3px;
+  border-radius: 50%;
+  box-sizing: border-box;
+  line-height: 34px;
+  border: 2px solid #ffcc5f;
+  overflow: hidden;
+}
+
+.suber-msg-wrapper .suber-msg-list {
+  background-color: snow;
+  height: 410px;
+}
+
+
+.suber-msg-wrapper .suber-msg {
+  width: 46px;
+  margin: 0 3px;
+  height: 400px;
+  display: inline-block;
+}
+
+.suber-msg-wrapper .suber-msg .msg {
+  width: 46px;
+  height: 26px;
+  line-height: 26px;
+  padding: 0 5px;
+  box-sizing: border-box;
+  background: #ddd;
+  border-radius: 3px;
+  color: #fff;
+  margin: 10px 0;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.suber-msg-wrapper .suber-msg .msg:hover {
+  background-color: #aaa;
+}
+
+
+.msg::after, .msg::before, .watcher-wrapper::after, .watcher-wrapper::before {
+  content: '';
+  position: absolute;
+  width: 2px;
+  height: 10px;
+  background: aqua;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.msg::before {
+  top: -10px;
+}
+
+.watcher-wrapper::after, .watcher-wrapper::before {
+  height: 12px;
+  bottom: -12px;
+  z-index: -1;
+}
+
+
+.watcher-wrapper::before {
+  top: -12px;
+}
+
+.suber-msg-wrapper .suber-msg {
+  position: relative;
+}
+
+.suber-msg-wrapper .suber-msg.more::before {
+  content: '';
+  position: absolute;
+  width: 52px;
+  height: 2px;
+  background: aqua;
+  top: 0;
+  left: -2px;
+}
+
+.suber-msg-wrapper .suber-msg:nth-child(1)::before {
+  width: 26px;
+  left: 24px;
+}
+
+.suber-msg-wrapper .suber-msg:last-child::before {
+  width: 26px;
+  left: -3px;
+}
+
+.suber-msg-wrapper .suber-msg .msg .msg-name {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.suber-msg-wrapper .suber-msg .suber {
+  width: 44px;
+  padding-top: 3px;
+  overflow-x: hidden;
+  border: 2px solid aqua;
+  border-radius: 5px 5px 0px 0px;
+  border-bottom: none;
+}
+
+.suber-msg-wrapper .suber-msg ul {
+  width: 60px;
+  box-sizing: border-box;
+  height: 360px;
+  overflow-y: auto;
+  border-bottom: none;
+}
+
+.suber-msg-wrapper .suber-msg ul li{
+  width: 38px;
+  height: 38px;
+  line-height: 36px;
+  box-sizing: border-box;
+  margin:2px 2px 5px 2px;
+  border-radius: 5px;
+  border: 2px solid #ffcc5f;
+  color: #000;
+  overflow: hidden;
+}
+/* 发布者的监听者们end */
+
+
+/* 消息弹框start */
+.msg-box {
+  width: 300px;
+  height: 250px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  border-radius: 10px;
+  display: none;
+}
+
+.msg-box .title {
+  height: 50px;
+  width: 100%;
+  line-height: 50px;
+  font-size: 16px;
+  border-bottom: 1px solid #ddd;
+  border-radius: 5px;
+  text-indent: 1em;
+  margin-bottom: 20px;
+}
+/* 消息弹框end */

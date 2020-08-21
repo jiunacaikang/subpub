@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>sub-pub</title>
+  <link rel="stylesheet" href="./style.css">
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/vue/2.6.10/vue.js"></script>
+  <script src="./subpub.js"></script>
+</head>
+
+<body>
+  <div id="app" class="app">
+    <div class="btn-group btns">
+      <button class="primary" @click="addPuber">创建发布者</button>
+      <button @click="addSuber">创建订阅者</button>
+    </div>
+
+    <div class="suber-list" v-if="subers.length">
+      <div :class="[{blur: curSuber.id && curSuber.id != suber.id}, 'suber']" v-for="suber in subers" :key="suber.id">
+        <span class="name">{{ suber.name }}</span>
+        <div class="btn-group">
+          <button class="small success" @click="listen(suber)">订阅</button>
+          <button class="small error" @click="unlisten(suber)">解订</button>
+        </div>
+      </div>
+      <div class="mask-tip" v-show="curSuber.id">
+        选择{{subType === 'add' ? '订阅' : '解除'}}对象
+        <span class="close" @click="closeChoice">+</span>
+      </div>
+    </div>
+
+    <div class="puber-list">
+      <div class="puber-wraper" v-for="puber in pubers" :key="puber.id">
+        <div class="puber">
+          <button v-show="!curSuber.id" class="small success" @click="publish(puber)">发布消息</button>
+          <span class="name">{{ puber.name }}</span>
+          <div class="choice-bg" @click="choicePuber(puber)" v-show="curSuber.id">
+            <i :class="selectedPuber.id === puber.id ? 'choice selected-' + subType : 'choice'"></i>
+          </div>
+        </div>
+        <div class="suber-msg-wrapper">
+          <div class="watcher-wrapper" :class="puber.watcherList.length ? 'light' : ''">
+            <div class="watcher-tips">观察者模式列表：订阅时不选择事件，有发布就触发回调</div>
+            <ul :class="['watcher-list','watcher-' + puber.id]">
+              <li :class="'suber-' + watcher.id" v-for="(watcher, index) in puber.watcherList" :key="index" :title="watcher.name">{{watcher.name}}</li>
+            </ul>
+          </div>
+          <div class="suber-msg-list">
+            <div :class="Object.keys(puber.messageMap).length > 1 ? 'more' : ''" class="suber-msg" v-for="(value, key, index) in puber.messageMap" :key="key">
+              <div class="msg" @click="fastPublish(puber, key)">
+                <span class="msg-name" :title="key">{{key}}</span>
+              </div>
+              <div class="suber">
+                <ul :class="'puber-' + puber.id" :data-msg="key">
+                  <li :class="'suber-' + suber.id" v-for="suber in value" :key="suber.id" :title="suber.name">{{suber.name}}</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mask"></div>
+    <div class="msg-box">
+      <span class="close gray" @click="closeMsgBox">+</span>
+      <div class="title" v-show="subType === 'add' || msgType">{{msgType === 'listen' ? '订阅' : '发布'}}'{{selectedPuber.name}}'的消息</div>
+      <div class="title" v-show="subType === 'remove'">解除对'{{selectedPuber.name}}'消息的订阅</div>
+      <select v-model="msg" :disabled="!!msgIpt">
+        <option value="" selected>选择已有消息</option> 
+        <option v-for="(value, key, index) in selectedPuber.messageMap" :value="key" :key="index">{{key}}</option>
+      </select>
+      <input type="text" v-model="msgIpt" :disabled="!!msg" placeholder="手动输入消息" maxlength="6">
+      <div class="btn-group btns">
+        <button @click="closeMsgBox">取消</button>
+        <button class="success" @click="msgConfirm">确定</button>
+      </div>
+    </div>
+  </div>
+</body>
+<script src="./index.js"></script>
+</html>
