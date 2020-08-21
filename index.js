@@ -13,7 +13,7 @@ const $selectSuber = function (puber, msg, suber) {
 }
 //获取观察者
 const $selectWatcher = function (puber, suber) {
-  return $(`.watcher-${puber.id}`).find(`.suber-${suber.id}`)
+  return $(`.watcher-${puber.id} .suber-${suber.id}`)
 }
 //闪动
 const $blink = function (selector, cb) {
@@ -39,9 +39,9 @@ new Vue({
     }
   },
   mounted() {
-    return false
+    //return false
     for (var i = 0; i < 2; i++) {
-      if (i < 1) {
+      if (i < 2) {
         this.pubers.push(new Publish('pub' + i))
       }
       this.subers.push(new Subscribe('sub' + i))
@@ -132,30 +132,9 @@ new Vue({
      * @param {Subscribe} suber 订阅者
      */
     doUnlisten(suber, puber, msg) {
-      let type = 'fadeOut';
-      if (msg) {
-        //解除某一个消息下的订阅者
-        $selectSuber(puber, msg, suber)[type](duration, () => {
-          suber.unlisten(puber, msg);
-        })
-      } else {
-        //解除所有订阅者列表中的订阅者
-        for (let key in puber.messageMap) {
-          $selectSuber(puber, key, suber)[type](duration, () => {
-            suber.unlisten(puber, key);
-          })
-        }
-
-        //解除观察者列表中的观察者
-        $selectWatcher(puber, suber)[type](duration, () => {
-          suber.unlisten(puber, msg);
-        })
-      }
-
-      setTimeout(() => {
-        this.closeMsgBox();
-        this.resetSuber();
-      }, duration + 50)
+      suber.unlisten(puber, msg);
+      this.closeMsgBox();
+      this.resetSuber();
     },
 
     /**
@@ -183,7 +162,7 @@ new Vue({
      */
     fastPublish(puber, msg) {
       let value = prompt("请输入要发布的内容")
-      value !== null && setTimeout(() => this.doPublish(puber, msg, { value }), duration)
+      value !== null && setTimeout(() => this.doPublish(puber, msg, { value }), duration + 50)
     },
     /**
      * 执行发布消息
@@ -257,7 +236,7 @@ new Vue({
 
       if (this.msgType === 'publish') { //发布
         let value = prompt("请输入要发布的内容")
-        this.doPublish(this.selectedPuber, msg, { value })
+        value !== null && setTimeout(() => this.doPublish(this.selectedPuber, msg, { value }), duration + 50);
       }
 
       if (this.subType === 'remove') { //取订

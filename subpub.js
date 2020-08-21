@@ -3,7 +3,7 @@ class Subscribe {
   constructor(name = 'subscriber') {
     this.name = name
     //随机id模拟唯一
-    this.id = Math.ceil(Math.random() * 10000) + 10000
+    this.id = Math.ceil(Math.random() * 500000) + 500000
   }
   /**
    * 
@@ -24,8 +24,8 @@ class Subscribe {
    * @param {Publisher} publisher 发布者
    * @param {String} message 消息
    */
-  unlisten(publisher, message) {
-    publisher && publisher.removeListener(this, message)
+  unlisten(publisher, message, removeAll = true) {
+    publisher && publisher.removeListener(this, message, removeAll)
     return this
   }
 }
@@ -55,8 +55,8 @@ class Publish {
         this.watcherList[existInWatcherList] = subscriber;
       }
 
-      //并取消这个订阅者已经订阅的消息
-      this.removeListener(subscriber, '', true)
+      //并取消这个订阅者已经订阅的消息 但是不取消观察者模式关系
+      this.removeListener(subscriber, '', false)
     } else { //订阅发布模式
       //已经是观察者情况下 不用再单独订阅消息
       if(existInWatcherList !== -1) return false
@@ -78,9 +78,9 @@ class Publish {
    * 
    * @param {Subscribe} subscriber 
    * @param {String} message 
-   * @param {Boolean} self 内部转换为观察者模式时传入true
+   * @param {Boolean} removeAll 删除 所有订阅列表和观察列表中的此订阅者
    */
-  removeListener(subscriber, message, self = false) { //删除消息订阅者
+  removeListener(subscriber, message, removeAll = true) { //删除消息订阅者
     if (!subscriber) return this
 
     //如果传了message只删除此message下的订阅关系，否则删除此订阅者的所有订阅关系
@@ -102,8 +102,8 @@ class Publish {
       if (!subscribers.length) delete this.messageMap[message]
     })
 
-    //观察者模式下删除订阅者
-    !message && !self && (this.watcherList = this.watcherList.filter(watcher => watcher.id !== subscriber.id))
+    //没有具体消息为观察者模式
+    !message && removeAll && (this.watcherList = this.watcherList.filter(watcher => watcher.id !== subscriber.id))
     return this
   }
   /**
