@@ -1,5 +1,3 @@
-const noop = function () { console.log('i am noop') };
-
 const duration = 200;
 
 //如果传消息了 则取具体消息列表 否则取观察者列表

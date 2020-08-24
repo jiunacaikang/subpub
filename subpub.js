@@ -1,3 +1,8 @@
+const noop = function () { console.log('i am noop') }
+const checkType = (source, type) => {
+  return Object.prototype.toString.call(source).slice(8, -1).toLowerCase() === type.toLowerCase();
+}
+
 //订阅者构造器
 class Subscribe {
   constructor(name = 'subscriber') {
@@ -15,7 +20,7 @@ class Subscribe {
     handler//收到消息后的处理方法
   }) {
     //订阅消息的回调函数
-    this[`${publisher.id}_${message}_handler`] = handler
+    this[`${publisher.id}_${message}_handler`] = checkType(handler,'function') ? handler : noop
     publisher && publisher instanceof Publish && publisher.addListener(this, message)
     return this
   }
