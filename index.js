@@ -35,7 +35,7 @@ new Vue({
   mounted() {
     //return false
     for (var i = 0; i < 2; i++) {
-      if (i < 2) {
+      if (i < 1) {
         this.pubers.push(new Publish('pub' + i))
       }
       this.subers.push(new Subscribe('sub' + i))
