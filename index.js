@@ -4,17 +4,10 @@ const duration = 200;
 
 //如果传消息了 则取具体消息列表 否则取观察者列表
 const $selcetSuberWrapper = function (puber, msg) {
-  return !msg ? $(`.watcher-${puber.id}`).parent()
+  return !msg ? $(`.watcher-${puber.id}`).parents('.watcher-wrapper')
     : $(`.puber-${puber.id}[data-msg='${msg}']`).parent()
 }
-//获取订阅者
-const $selectSuber = function (puber, msg, suber) {
-  return $(`.puber-${puber.id}[data-msg='${msg}']`).find(`.suber-${suber.id}`)
-}
-//获取观察者
-const $selectWatcher = function (puber, suber) {
-  return $(`.watcher-${puber.id} .suber-${suber.id}`)
-}
+
 //闪动
 const $blink = function (selector, cb) {
   $(selector).fadeOut(duration, function(){
@@ -32,6 +25,7 @@ new Vue({
       subers: [],
       curSuber: {},//要操作的订阅者
       selectedPuber: {},//选中的发布者
+      showMsgBox: false,
       subType: '',//操作类型 add:订阅 remove:解除
       msgType: '',//消息类型 listen:订阅 publish:发布
       msg: '',
@@ -45,7 +39,7 @@ new Vue({
         this.pubers.push(new Publish('pub' + i))
       }
       this.subers.push(new Subscribe('sub' + i))
-      this.doListen(this.subers[i], this.pubers[0], 'asdaflasdasdfs')
+      this.doListen(this.subers[i], this.pubers[0], 'asdafla')
       this.doListen(this.subers[i], this.pubers[0], '胜多负少')
     }
   },
@@ -108,13 +102,31 @@ new Vue({
         alert("不可超过10条消息")
         return false
       }
+
+      //重新订阅时 执行闪烁效果
+      let suberIndex = puber.messageMap[msg] && puber.messageMap[msg].findIndex(el => el.id === suber.id)
+      let curSuber = Object.assign({}, suber)
+      if (msg && suberIndex > -1) {
+        curSuber.refresh = true
+        this.$set(puber.messageMap[msg], suberIndex, curSuber)
+        setTimeout(() => {
+          curSuber.refresh = false;
+          this.$set(puber.messageMap[msg], suberIndex, curSuber)
+          this.$forceUpdate();
+          }, duration)
+      } else {
+        let watcherIndex = puber.watcherList.findIndex(el => el.id === suber.id)
+        if (watcherIndex > -1) {
+          this.$set(puber.watcherList[watcherIndex], 'refresh', true)
+          setTimeout(() => {
+            this.$set(puber.watcherList[watcherIndex], 'refresh', false)
+          }, duration)
+        }
+      }
+
       suber.listen({ publisher: puber, message: msg, handler });
-      this.closeMsgBox();
       this.resetSuber();
-      this.$nextTick(() => {
-        $blink($selectWatcher(puber, suber))
-        $blink($selectSuber(puber, msg, suber))
-      })
+      this.closeMsgBox();
     },
 
     /**
@@ -175,10 +187,25 @@ new Vue({
       
       //若观察者列表有数据 就闪动表示收到消息
       if (puber.watcherList.length) {
-        $blink($selcetSuberWrapper(puber), () => msg && $blink($selcetSuberWrapper(puber, msg)));
+        if (msg) {
+          let $msg = $selcetSuberWrapper(puber, msg).siblings('.msg');
+          $msg.addClass('light');
+          setTimeout(() => {  $msg.removeClass('light') }, duration * 4 + 100);
+        }
+
+        //先更新观察者列表 再更新订阅者列表
+        $blink($selcetSuberWrapper(puber), () =>  msg && $blink($selcetSuberWrapper(puber, msg)));
       } else {
-        msg && $blink($selcetSuberWrapper(puber, msg));
+        //订阅者集合照到对应消息 闪动
+        if (msg) {
+          let $msg = $selcetSuberWrapper(puber, msg).siblings('.msg');
+          $msg.addClass('light');
+          setTimeout(() => {  $msg.removeClass('light') }, duration * 2 + 100);
+          
+          $blink($selcetSuberWrapper(puber, msg));
+        }
       }
+
       
       puber.publish(msg, info);
       this.closeMsgBox();
@@ -213,11 +240,7 @@ new Vue({
      * @param {Boolean} type 方式
      */
     toggleMsgBox(type) {
-      if (type) {
-        $(".mask,.msg-box").fadeIn();
-      } else {
-        $(".mask,.msg-box").fadeOut();
-      }
+      this.showMsgBox = type;
     },
     /**
      * 确认选择消息

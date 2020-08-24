@@ -45,8 +45,84 @@ li {
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, .3);
-  display: none;
 }
+
+/* 动画start */
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .2s;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
+
+.list-enter-active, .list-leave-active {
+  transition: all 0.2s;
+}
+.list-enter, .list-leave-to {
+  opacity: 0;
+  transform: translateY(-30px);
+}
+
+.blink {
+  animation: blink 0.5s ease-out 0s infinite;
+}
+@keyframes blink {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  10% {
+    transform: scale(0.8);
+    opacity: 0.8;
+  }
+
+  20% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+
+  30% {
+    transform: scale(0.8);
+    opacity: 0.8;
+  }
+
+  40% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(0.8);
+    opacity: 0.8;
+  }
+
+  60% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+
+  70% {
+    transform: scale(0.8);
+    opacity: 0.8;
+  }
+
+  80% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  90% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+/* 动画end */
 
 select, input {
   width: 200px;
@@ -60,6 +136,7 @@ select, input {
   display: block;
   box-sizing: border-box;
   margin-bottom: 20px;
+  background: none;
 }
 
 select.disabled, input.disabled {
@@ -332,7 +409,6 @@ button.error:hover {
   border-bottom: 2px solid #333;
   margin: 10px 0;
   position: relative;
-  transition: all 0.2s;
 }
 
 .watcher-wrapper .watcher-tips {
@@ -403,7 +479,11 @@ button.error:hover {
 }
 
 .suber-msg-wrapper .suber-msg .msg:hover {
-  background-color: #aaa;
+  background-color: #ccc;
+}
+
+.suber-msg-wrapper .suber-msg .msg.light {
+  background-color: #1be03d;
 }
 
 
@@ -500,12 +580,11 @@ button.error:hover {
   width: 300px;
   height: 250px;
   position: fixed;
-  top: 50%;
+  top: 150px;
   left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #fff;
+  transform: translateX(-50%);
+  background-color: rgba(255, 255, 255, 0.8);
   border-radius: 10px;
-  display: none;
 }
 
 .msg-box .title {
@@ -513,8 +592,8 @@ button.error:hover {
   width: 100%;
   line-height: 50px;
   font-size: 16px;
-  border-bottom: 1px solid #ddd;
-  border-radius: 5px;
+  border-bottom: 1px solid #000;
+  border-radius: 5px 5px 0 0;
   text-indent: 1em;
   margin-bottom: 20px;
 }
