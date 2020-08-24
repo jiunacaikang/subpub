@@ -103,28 +103,34 @@ new Vue({
         return false
       }
 
-      //重新订阅时 执行闪烁效果
-      let suberIndex = puber.messageMap[msg] && puber.messageMap[msg].findIndex(el => el.id === suber.id)
-      let curSuber = Object.assign({}, suber)
-      if (msg && suberIndex > -1) {
-        curSuber.refresh = true
+      //重新订阅时 执行抖动表示重新订阅
+      let suberIndex = puber.messageMap[msg] ? puber.messageMap[msg].findIndex(el => el.id === suber.id) : -1
+      let watcherIndex = puber.watcherList.findIndex(el => el.id === suber.id)
+      let curSuber = Object.assign({refresh: true}, suber)
+
+      if (suberIndex > -1) {//订阅模式下 执行抖动效果
         this.$set(puber.messageMap[msg], suberIndex, curSuber)
         setTimeout(() => {
           curSuber.refresh = false;
           this.$set(puber.messageMap[msg], suberIndex, curSuber)
           this.$forceUpdate();
-          }, duration)
-      } else {
-        let watcherIndex = puber.watcherList.findIndex(el => el.id === suber.id)
-        if (watcherIndex > -1) {
-          this.$set(puber.watcherList[watcherIndex], 'refresh', true)
-          setTimeout(() => {
-            this.$set(puber.watcherList[watcherIndex], 'refresh', false)
-          }, duration)
-        }
+        }, duration)
+      } else if (watcherIndex > -1) {//观察者模式下 执行抖动效果
+        this.$set(puber.watcherList, watcherIndex, curSuber)
+        setTimeout(() => {
+          curSuber.refresh = false;
+          this.$set(puber.watcherList, watcherIndex, curSuber)
+        }, duration)
       }
 
-      suber.listen({ publisher: puber, message: msg, handler });
+      //初始化订阅 立即执行订阅
+      if (suberIndex === -1 && watcherIndex === -1 ) {
+        suber.listen({ publisher: puber, message: msg, handler });
+      } else { //更新订阅时 等抖动效果执行完再添加
+        setTimeout(() => {
+          suber.listen({ publisher: puber, message: msg, handler });
+        }, duration)
+      }
       this.resetSuber();
       this.closeMsgBox();
     },

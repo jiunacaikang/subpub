@@ -15,7 +15,7 @@ class Subscribe {
     handler//收到消息后的处理方法
   }) {
     //订阅消息的回调函数
-    this[message + "_handler"] = handler
+    this[`${publisher.id}_${message}_handler`] = handler
     publisher && publisher instanceof Publish && publisher.addListener(this, message)
     return this
   }
@@ -69,7 +69,7 @@ class Publish {
       if (existIndex === -1) {//不存在这个订阅者时添加
         this.messageMap[message].push(subscriber)
       } else {//存在这个订阅者时更新回调handler
-        this.messageMap[message][existIndex][message + "_handler"] = subscriber[message + "_handler"]
+        this.messageMap[message][existIndex][`${this.id}_${message}_handler`] = subscriber[`${this.id}_${message}_handler`]
       }
     }
 
@@ -114,14 +114,14 @@ class Publish {
   publish(message, info) { //发布通知
     //观察者模式 执行回调
     this.watcherList.forEach(watcher => {
-      watcher._handler(info)
+      watcher[`${this.id}__handler`](info)
     })
 
     if (message) {//执行此消息下的订阅者回调
       const subscribers = this.messageMap[message]
       if (subscribers && subscribers.length) {
         subscribers.forEach(subscriber => {
-          subscriber[message + "_handler"](info)
+          subscriber[`${this.id}_${message}_handler`](info)
         })
       }
     } 

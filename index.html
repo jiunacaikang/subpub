@@ -50,7 +50,7 @@
             <div class="watcher-tips">观察者模式列表：订阅时不选择事件，有发布就触发回调</div>
             <ul :class="['watcher-list','watcher-' + puber.id]">
               <transition-group name="list">
-                <li :class="['suber-' + watcher.id, {'blink': watcher.refresh}]" v-for="(watcher, index) in puber.watcherList" :key="watcher.id" :title="watcher.name">{{watcher.name}}</li>
+                <li :class="{'blink': watcher.refresh}" v-for="(watcher, index) in puber.watcherList" :key="watcher.id" :title="watcher.name">{{watcher.name}}</li>
               </transition-group>
             </ul>
           </div>
@@ -62,7 +62,7 @@
               <div class="suber">
                 <ul :class="'puber-' + puber.id" :data-msg="key">
                   <transition-group name="list">
-                    <li :class="['suber-' + suber.id, {'blink': suber.refresh}]" v-for="suber in value" :key="suber.id" :title="suber.name">{{suber.name}}</li>
+                    <li :class="{'blink': suber.refresh}" v-for="suber in value" :key="suber.id" :title="suber.name">{{suber.name}}</li>
                   </transition-group>
                 </ul>
               </div>
