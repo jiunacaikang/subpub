@@ -82,7 +82,7 @@
             <option value="" selected>选择已有消息</option> 
             <option v-for="(value, key, index) in selectedPuber.messageMap" :value="key" :key="index">{{key}}</option>
           </select>
-          <input type="text" v-model="msgIpt" :class="!!msg ? 'disabled' : ''" :disabled="!!msg" placeholder="手动输入消息" maxlength="6">
+          <input type="text" v-model="msgIpt" placeholder="手动输入消息" maxlength="6">
           <div class="btn-group btns">
             <button @click="closeMsgBox">取消</button>
             <button class="success" @click="msgConfirm">确定</button>
