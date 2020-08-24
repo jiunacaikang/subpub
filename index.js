@@ -187,23 +187,20 @@ new Vue({
       
       //若观察者列表有数据 就闪动表示收到消息
       if (puber.watcherList.length) {
-        if (msg) {
-          let $msg = $selcetSuberWrapper(puber, msg).siblings('.msg');
-          $msg.addClass('light');
-          setTimeout(() => {  $msg.removeClass('light') }, duration * 4 + 100);
-        }
-
         //先更新观察者列表 再更新订阅者列表
         $blink($selcetSuberWrapper(puber), () =>  msg && $blink($selcetSuberWrapper(puber, msg)));
       } else {
         //订阅者集合照到对应消息 闪动
         if (msg) {
-          let $msg = $selcetSuberWrapper(puber, msg).siblings('.msg');
-          $msg.addClass('light');
-          setTimeout(() => {  $msg.removeClass('light') }, duration * 2 + 100);
-          
           $blink($selcetSuberWrapper(puber, msg));
         }
+      }
+
+      if (msg) { //让msg标签变绿
+        let $msg = $selcetSuberWrapper(puber, msg).siblings('.msg');
+        $msg.addClass('light');
+        let times = puber.watcherList.length ? 4 : 2;
+        setTimeout(() => {  $msg.removeClass('light') }, duration * times + 100);
       }
 
       
