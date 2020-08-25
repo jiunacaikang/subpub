@@ -6,6 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>sub-pub</title>
   <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./popop/index.css">
+  <script src="./popop/index.js"></script>
   <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdn.bootcss.com/vue/2.6.10/vue.js"></script>
   <script src="./subpub.js"></script>
@@ -29,7 +31,7 @@
       <transition name="fade">
         <div class="mask-tip" v-show="curSuber.id">
           选择{{subType === 'add' ? '订阅' : '解除'}}对象
-          <span class="close" @click="closeChoice">+</span>
+          <span class="close" @click="closeChoice"></span>
         </div>
     </transition>
     </div>
@@ -75,7 +77,7 @@
     <transition name="fade">
       <div class="mask" v-show="showMsgBox">
         <div class="msg-box">
-          <span class="close gray" @click="closeMsgBox">+</span>
+          <span class="close gray" @click="closeMsgBox"></span>
           <div class="title" v-show="subType === 'add' || msgType">{{msgType === 'listen' ? '订阅' : '发布'}}'{{selectedPuber.name}}'的消息</div>
           <div class="title" v-show="subType === 'remove'">解除对'{{selectedPuber.name}}'消息的订阅</div>
           <select v-model="msg" :class="!!msgIpt ? 'disabled' : ''" :disabled="!!msgIpt">

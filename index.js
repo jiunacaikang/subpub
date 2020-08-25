@@ -1,4 +1,4 @@
-const duration = 200;
+const duration = 300;
 
 //如果传消息了 则取具体消息列表 否则取观察者列表
 const $selcetSuberWrapper = function (puber, msg) {
@@ -47,36 +47,48 @@ new Vue({
      */
     addPuber() {
       if (this.pubers.length > 1) {
-        alert('样式限制只能增加2个')
-        return false
-      }
-      let name = prompt("请输入发布者名称")
-      if (!name) return false
-      if (this.pubers.find(el => el.name == name)) {
-        alert("名字不能重复");
+        popop.pop('测试演示2个够用了')
         return false
       }
 
-      let puber = new Publish(name);
-      this.pubers.push(puber)
+      let _pormpt = popop.prompt.bind(this);
+      _pormpt({
+        title: '请输入发布者名称',
+        confirm(name) {
+          if (!name) return false
+          if (this.pubers.find(el => el.name == name)) {
+            popop.toast("名字不能重复");
+            return false
+          }
+    
+          let puber = new Publish(name);
+          this.pubers.push(puber)
+          popop.toast("创建发布者:" + name);
+        },
+      });
     },
     /**
      * 创建订阅者
      */
     addSuber() {
       if (this.subers.length > 9) {
-        alert('只能增加10个')
+        popop.pop('测试演示10个够用了')
         return false
       }
-      let name = prompt("请输入订阅者名称")
-      if (!name) return false
-      if (this.subers.find(el => el.name == name)) {
-        alert("名字不能重复");
-        return false
-      }
-
-      let suber = new Subscribe(name);
-      this.subers.push(suber)
+      let _pormpt = popop.prompt.bind(this);
+      _pormpt({
+        title: '请输入订阅者名称',
+        confirm(name) {
+          if (!name) return false
+          if (this.subers.find(el => el.name == name)) {
+            popop.toast("名字不能重复");
+            return false
+          }
+    
+          let suber = new Subscribe(name);
+          this.subers.push(suber)
+        },
+      });
     },
     /**
      * 开始订阅
@@ -97,7 +109,7 @@ new Vue({
      */
     doListen(suber, puber, msg, handler = noop) {
       if (Object.keys(puber.messageMap).length >= 10 && Object.keys(puber.messageMap).indexOf(msg) === -1) {
-        alert("不可超过10条消息")
+        popop.pop('测试演示订阅10个够用了')
         return false
       }
 
@@ -187,24 +199,30 @@ new Vue({
      * @param {Object} info 内容
      */
     doPublish(puber, msg, info) {
+      let $msg = $selcetSuberWrapper(puber, msg).siblings('.msg');
+      
       info = Object.assign({ _puberName: puber.name, _msgName: msg, _timePublish: Date.now() }, info)
       
       //若观察者列表有数据 就闪动表示收到消息
       if (puber.watcherList.length) {
         //先更新观察者列表 再更新订阅者列表
-        $blink($selcetSuberWrapper(puber), () =>  msg && $blink($selcetSuberWrapper(puber, msg)));
+        $blink($selcetSuberWrapper(puber), () => {
+          if (msg) {
+            $msg.addClass('light');
+            $blink($selcetSuberWrapper(puber, msg))
+          }
+        });
       } else {
         //订阅者集合照到对应消息 闪动
         if (msg) {
+          $msg.addClass('light');
           $blink($selcetSuberWrapper(puber, msg));
         }
       }
 
       if (msg) { //让msg标签变绿
-        let $msg = $selcetSuberWrapper(puber, msg).siblings('.msg');
-        $msg.addClass('light');
-        let times = puber.watcherList.length ? 4 : 2;
-        setTimeout(() => {  $msg.removeClass('light') }, duration * times + 100);
+        let delayTime = duration * (puber.watcherList.length ? 4 : 2) + 100;
+        setTimeout(() => { $msg.removeClass('light') }, delayTime);
       }
 
       
