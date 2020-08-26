@@ -214,7 +214,7 @@
             event.preventDefault();
         });
     }
-    function loadingCloss() {
+    function loadingClose() {
         if (!$$("loadingBox")) return false;
         $$("loadingBox").className = "_loadingBox hide";
         timerL = setTimeout(() => { $$("loadingBox").style.display = "none"; }, 300);
@@ -225,6 +225,6 @@
         pop: pop,      //pop方法
         prompt: prompt, //输入弹框
         loading: loading,    //loading
-        loadingClose: loadingCloss  //loadingClose
+        loadingClose: loadingClose  //loadingClose
     };
 }));

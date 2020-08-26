@@ -3,18 +3,12 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>sub-pub</title>
   <link rel="stylesheet" href="./style.css">
   <link rel="stylesheet" href="./popop/index.css">
-  <script src="./popop/index.js"></script>
-  <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://cdn.bootcss.com/vue/2.6.10/vue.js"></script>
-  <script src="./subpub.js"></script>
 </head>
-
 <body>
-  <div id="app" class="app">
+  <div id="app" class="app" v-cloak>
     <div class="btn-group btns">
       <button class="primary" @click="addPuber">创建发布者</button>
       <button @click="addSuber">创建订阅者</button>
@@ -94,5 +88,11 @@
   </transition>
   </div>
 </body>
+<script src="./popop/index.js"></script>
+<script>popop.loading();</script>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/vue/2.6.10/vue.js"></script>
+<script src="./subpub.js"></script>
 <script src="./index.js"></script>
+<script>popop.loadingClose();</script>
 </html>

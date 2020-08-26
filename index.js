@@ -15,6 +15,10 @@ const $blink = function (selector, cb) {
   });
 }
 
+String.prototype.trim = function () {
+  return this.replace(/(^\s*)|(\s*$)/g, "");
+}
+
 new Vue({
   el: '#app',
   data: function() {
@@ -27,7 +31,8 @@ new Vue({
       subType: '',//操作类型 add:订阅 remove:解除
       msgType: '',//消息类型 listen:订阅 publish:发布
       msg: '',
-      msgIpt: ''
+      msgIpt: '',
+      prompt: ''
     }
   },
   mounted() {
@@ -40,6 +45,8 @@ new Vue({
       this.doListen(this.subers[i], this.pubers[0], 'asdafla')
       this.doListen(this.subers[i], this.pubers[0], '胜多负少')
     }
+
+    this.prompt = popop.prompt.bind(this);
   },
   methods: {
     /**
@@ -51,10 +58,10 @@ new Vue({
         return false
       }
 
-      let _pormpt = popop.prompt.bind(this);
-      _pormpt({
+      this.prompt({
         title: '请输入发布者名称',
         confirm(name) {
+          name = name.trim();
           if (!name) return false
           if (this.pubers.find(el => el.name == name)) {
             popop.toast("名字不能重复");
@@ -75,10 +82,10 @@ new Vue({
         popop.pop('测试演示10个够用了')
         return false
       }
-      let _pormpt = popop.prompt.bind(this);
-      _pormpt({
+      this.prompt({
         title: '请输入订阅者名称',
         confirm(name) {
+          name = name.trim();
           if (!name) return false
           if (this.subers.find(el => el.name == name)) {
             popop.toast("名字不能重复");
@@ -87,6 +94,7 @@ new Vue({
     
           let suber = new Subscribe(name);
           this.subers.push(suber)
+          popop.toast("创建订阅者:" + name);
         },
       });
     },
@@ -135,8 +143,10 @@ new Vue({
 
       //初始化订阅 立即执行订阅
       if (suberIndex === -1 && watcherIndex === -1 ) {
+        popop.toast(`${suber.name}订阅了 ${puber.name} ${msg ? "的'" + msg + "'" : ''}`);
         suber.listen({ publisher: puber, message: msg, handler });
       } else { //更新订阅时 等抖动效果执行完再添加
+        popop.toast(`${suber.name}刷新了对 ${puber.name} ${msg ? "'" + msg + "'" : ''}的订阅`);
         setTimeout(() => {
           suber.listen({ publisher: puber, message: msg, handler });
         }, duration)
@@ -160,6 +170,7 @@ new Vue({
      * @param {Subscribe} suber 订阅者
      */
     doUnlisten(suber, puber, msg) {
+      popop.toast(`${suber.name}解除对 ${puber.name} ${msg ? "'" + msg + "'" : ''}的订阅`);
       suber.unlisten(puber, msg);
       this.closeMsgBox();
       this.resetSuber();
@@ -189,8 +200,14 @@ new Vue({
      * @param {String} msg 消息
      */
     fastPublish(puber, msg) {
-      let value = prompt("请输入要发布的内容")
-      value !== null && setTimeout(() => this.doPublish(puber, msg, { value }), duration + 50)
+      this.prompt({
+        title: '请输入要发布的内容',
+        confirm(value) {
+          this.closeMsgBox();
+          value = value.trim()
+          setTimeout(() => this.doPublish(puber, msg, { value }), duration + 50)
+        }
+      });
     },
     /**
      * 执行发布消息
@@ -200,34 +217,35 @@ new Vue({
      */
     doPublish(puber, msg, info) {
       let $msg = $selcetSuberWrapper(puber, msg).siblings('.msg');
+      const hasMsg = msg && Object.keys(puber.messageMap).includes(msg);
       
+      //添加上发布者名字 发布消息名字 发布时间 
       info = Object.assign({ _puberName: puber.name, _msgName: msg, _timePublish: Date.now() }, info)
       
       //若观察者列表有数据 就闪动表示收到消息
       if (puber.watcherList.length) {
         //先更新观察者列表 再更新订阅者列表
+        popop.toast(puber.name + '通知观察者列表');
         $blink($selcetSuberWrapper(puber), () => {
-          if (msg) {
+          if (hasMsg) {
             $msg.addClass('light');
+            popop.toast('再通知‘'+ msg +'’的订阅列表');
             $blink($selcetSuberWrapper(puber, msg))
           }
         });
-      } else {
+      } else if(hasMsg) {
         //订阅者集合照到对应消息 闪动
-        if (msg) {
-          $msg.addClass('light');
-          $blink($selcetSuberWrapper(puber, msg));
-        }
+        $msg.addClass('light');
+        popop.toast(puber.name + '通知‘'+ msg +'’的订阅列表');
+        $blink($selcetSuberWrapper(puber, msg));
       }
 
-      if (msg) { //让msg标签变绿
+      if (hasMsg) { //让msg标签变绿
         let delayTime = duration * (puber.watcherList.length ? 4 : 2) + 100;
         setTimeout(() => { $msg.removeClass('light') }, delayTime);
       }
 
-      
       puber.publish(msg, info);
-      this.closeMsgBox();
       this.resetSuber();
     },
 
@@ -277,8 +295,13 @@ new Vue({
       }
 
       if (this.msgType === 'publish') { //发布
-        let value = prompt("请输入要发布的内容")
-        value !== null && setTimeout(() => this.doPublish(this.selectedPuber, msg, { value }), duration + 50);
+        this.prompt({
+          title: '请输入要发布的内容',
+          confirm(value) {
+            this.closeMsgBox();
+            setTimeout(() => this.doPublish(this.selectedPuber, msg, { value }), duration + 50)
+          }
+        });
       }
 
       if (this.subType === 'remove') { //取订

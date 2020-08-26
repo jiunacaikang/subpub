@@ -13,9 +13,14 @@ body{
 li {
   list-style:none;
 }
+
 #app {
   width: 1100px;
   margin: 0 auto;
+}
+
+[v-cloak] {
+  display: none;
 }
 
 .fl {
@@ -493,7 +498,7 @@ button.error:hover {
   margin: 10px 0;
   cursor: pointer;
   position: relative;
-  transition: all 0.2s;
+  transition: all 0.1s;
 }
 
 .suber-msg-wrapper .suber-msg .msg:hover {
