@@ -21,7 +21,8 @@ new Vue({
     }
   },
   mounted() {
-    //return false
+    this.prompt = Popop.prompt.bind(this);
+    return false
     for (var i = 0; i < 2; i++) {
       if (i < 1) {
         this.pubers.push(new Publish('pub' + i))
@@ -31,7 +32,6 @@ new Vue({
       this.doListen(this.subers[i], this.pubers[0], '胜多负少')
     }
 
-    this.prompt = Popop.prompt.bind(this);
   },
   methods: {
     /**
