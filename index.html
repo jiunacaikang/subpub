@@ -42,23 +42,23 @@
         </transition>
         </div>
         <div class="suber-msg-wrapper">
-          <div class="watcher-wrapper" :class="puber.watcherList.length ? 'light' : ''">
+          <div class="watcher-wrapper" :class="{light: puber.watcherList.length, blink: puber.watchBlink}">
             <div class="watcher-tips">观察者模式列表：订阅时不选择事件，有发布就触发回调</div>
-            <ul :class="['watcher-list','watcher-' + puber.id]">
+            <ul class="watcher-list">
               <transition-group name="list">
-                <li :class="{'blink': watcher.refresh}" v-for="(watcher, index) in puber.watcherList" :key="watcher.id" :title="watcher.name">{{watcher.name}}</li>
+                <li :class="{'shake': watcher.refresh}" v-for="(watcher, index) in puber.watcherList" :key="watcher.id" :title="watcher.name">{{watcher.name}}</li>
               </transition-group>
             </ul>
           </div>
           <div class="suber-msg-list">
             <div :class="Object.keys(puber.messageMap).length > 1 ? 'more' : ''" class="suber-msg" v-for="(value, key, index) in puber.messageMap" :key="key">
-              <div class="msg" @click="fastPublish(puber, key)">
+              <div class="msg" :class="{light: puber.subBlink === key}" @click="fastPublish(puber, key)">
                 <span class="msg-name" :title="key">{{key}}</span>
               </div>
-              <div class="suber">
-                <ul :class="'puber-' + puber.id" :data-msg="key">
+              <div class="suber" :class="{'blink': puber.subBlink === key}">
+                <ul>
                   <transition-group name="list">
-                    <li :class="{'blink': suber.refresh}" v-for="suber in value" :key="suber.id" :title="suber.name">{{suber.name}}</li>
+                    <li :class="{'shake': suber.refresh}" v-for="suber in value" :key="suber.id" :title="suber.name">{{suber.name}}</li>
                   </transition-group>
                 </ul>
               </div>
@@ -78,7 +78,7 @@
             <option value="" selected>选择已有消息</option> 
             <option v-for="(value, key, index) in selectedPuber.messageMap" :value="key" :key="index">{{key}}</option>
           </select>
-          <input type="text" v-model="msgIpt" placeholder="手动输入消息" maxlength="6">
+          <input type="text" v-model="msgIpt" placeholder="输入新的消息" maxlength="6">
           <div class="btn-group btns">
             <button @click="closeMsgBox">取消</button>
             <button class="success" @click="msgConfirm">确定</button>
@@ -89,10 +89,9 @@
   </div>
 </body>
 <script src="./popop/index.js"></script>
-<script>popop.loading();</script>
-<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>Popop.loading();</script>
 <script src="https://cdn.bootcss.com/vue/2.6.10/vue.js"></script>
 <script src="./subpub.js"></script>
 <script src="./index.js"></script>
-<script>popop.loadingClose();</script>
+<script>Popop.loadingClose();</script>
 </html>

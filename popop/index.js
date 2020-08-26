@@ -7,12 +7,15 @@
         module.exports = factory();
     } else {
         // 浏览器全局变量
-        root.popop = factory();
+        root.Popop = factory();
     }
 }(this, function () {
+    var caller = null, dftOpt = {}, timer = null, timerC = null, timerL = null, isMoile = _isMobile();
+
     function $$(id) {
         return id && document.getElementById(id);
     };
+
     function _isMobile () {
         var sUserAgent = navigator.userAgent.toLowerCase(),
         	bIsIpad = sUserAgent.match(/ipad/i) == "ipad",
@@ -25,25 +28,23 @@
         	bIsWM = sUserAgent.match(/windows mobile/i) == "windows mobile";
         return bIsIpad || bIsIphoneOs || bIsMidp || bIsUc7 || bIsUc || bIsAndroid || bIsCE || bIsWM
     }
-    var dftOpt = {}, timer = null, timerC = null, timerL = null, isMoile = _isMobile();
+    
     window.onresize = () => {
         isMoile = _isMobile();
         $$("popBox") && bindClick(dftOpt);
     }
 
-    let caller;
     function pop(opt) {
         caller = this;
         if (typeof opt === 'string') {
             var content = opt;
             opt = {
-                content:content
+                content: content,
             }
         }
 
-
         dftOpt = {
-            root:'',
+            blurId: opt && opt.blurId || '',
             type: opt && opt.type || "default",                             //弹框类型
             placeholder: opt && opt.placeholder || "请输入",                //placeholder
             title: opt && opt.title || "操作提示",                           //弹框 title
@@ -97,10 +98,12 @@
             document.body.appendChild(div);
         }
         
-        $$(dftOpt.root) && ($$(dftOpt.root).className = '_blur');
+        $$(dftOpt.blurId) && ($$(dftOpt.blurId).className += ' _blur');
         window.onhashchange = () => {//监听hashchange
             $$("popBox").style.display = 'none';
-            $$(dftOpt.root) && ($$(dftOpt.root).className = '');
+            if ($$(dftOpt.blurId)) {
+                $$(dftOpt.blurId).className = $$(dftOpt.blurId).className.replace(/\s*_blur/, '')
+            }
         };
         bindClick(dftOpt);
     };
@@ -132,7 +135,9 @@
                 return false;
             }
             $$("popBox").className += " hide";
-            $$(dftOpt.root) && ($$(dftOpt.root).className = '');
+            if ($$(dftOpt.blurId)) {
+                $$(dftOpt.blurId).className = $$(dftOpt.blurId).className.replace(/\s*_blur/, '') 
+            };
             setTimeout(() => {
                 $$("popBox").style.display = 'none';
                 $$("popBox").setAttribute("useable", true)
@@ -175,13 +180,13 @@
     };
     function toast(str) {
         var hintCon = '<div class="_toast">' + (str || "hint show~") + '</div>';
-        if ($$("hintBox")) {
-            $$("hintBox").className = "_toastBox";
-            $$("hintBox").style.display = "block";
-            $$("hintBox").innerHTML = hintCon;
+        if ($$("_hintBox")) {
+            $$("_hintBox").className = "_toastBox";
+            $$("_hintBox").style.display = "block";
+            $$("_hintBox").innerHTML = hintCon;
         } else {
             var div = document.createElement("div");
-            div.setAttribute("id", "hintBox");
+            div.setAttribute("id", "_hintBox");
             div.setAttribute("class", "_toastBox");
             div.innerHTML = hintCon;
             document.body.appendChild(div);
@@ -189,8 +194,8 @@
         clearTimeout(timer); clearTimeout(timerC);
         timer = null; timerC = null;
         timer = setTimeout(() => {//显示1s后消失
-            $$("hintBox").className = "_toastBox hide";
-            timerC = setTimeout(() => { $$("hintBox").style.display = "none"; }, 300);
+            $$("_hintBox").className = "_toastBox hide";
+            timerC = setTimeout(() => { $$("_hintBox").style.display = "none"; }, 300);
         }, 2000);
     };
     function loading() {
