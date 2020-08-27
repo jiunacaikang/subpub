@@ -213,9 +213,11 @@ new Vue({
         this.$set(puber, 'watchBlink', true);
         setTimeout(() => {
           this.$set(puber, 'watchBlink', false);
-          //订阅者集合收到对应消息 闪动
-          Popop.toast(`再通知'${msg}'的订阅列表`);
-          this.$set(puber, 'subBlink', msg);
+          
+          if (hasMsg) {//订阅者集合收到对应消息 闪动
+            Popop.toast(`再通知'${msg}'的订阅列表`);
+            this.$set(puber, 'subBlink', msg);
+          }
         }, duration + 100)
       } else if(hasMsg) {
         //订阅者集合收到对应消息 闪动
