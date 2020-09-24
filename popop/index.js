@@ -115,7 +115,7 @@
     };
 
     function popHide(event, keydown) {
-        if (mouseOver) return false;
+        if (mouseOver && !keydown) return false;
         var useable = $$("popBox").getAttribute("useable");
         if (useable === "true") {
             $$("popBox").setAttribute("useable", false);
@@ -169,17 +169,20 @@
             $$("popBox").addEventListener('touchend', popHide);
         } else {
             $$("popBox").addEventListener("mousemove", event => {
+                mouseOver = false;
                 if (event.target.id === "_confirm" || event.target.id === "_cancel") {
                     $$("_confirm").style.backgroundColor = opt.bg;
                     $$("_cancel").style.backgroundColor = opt.bg;
                     event.target.style.backgroundColor = opt.activebg;
-                    $$("popBox").addEventListener('click', popHide);
                 } else {
+                    mouseOver = true;
                     $$("_confirm").style.backgroundColor = opt.bg;
                     $$("_cancel").style.backgroundColor = opt.bg;
                 }
             });
+            $$("popBox").addEventListener('click', popHide);
         }
+
         $$("popBox").addEventListener("keydown", e => {
             if (e.keyCode == 13) {
                 popHide(e, true)

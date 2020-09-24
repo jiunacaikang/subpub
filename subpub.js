@@ -1,4 +1,4 @@
-const noop = function () { console.log('i am noop') }
+const noop = function () {}
 const checkType = (source, type) => {
   return Object.prototype.toString.call(source).slice(8, -1).toLowerCase() === type.toLowerCase();
 }
@@ -11,7 +11,7 @@ class Subscribe {
     this.id = Math.ceil(Math.random() * 500000) + 500000
   }
   /**
-   * 
+   * 订阅消息
    * @param {Object} 
    */
   listen({
@@ -19,18 +19,23 @@ class Subscribe {
     message,//订阅的消息
     handler//收到消息后的处理方法
   }) {
-    //订阅消息的回调函数
-    this[`${publisher.id}_${message}_handler`] = checkType(handler,'function') ? handler : noop
-    publisher && publisher instanceof Publish && publisher.addListener(this, message)
+    //可能存在对不同发布者订阅相同的消息
+    //回调函数要跟发布者id绑定 来区分不同发布者
+    if (publisher instanceof Publish) {
+      publisher._addListener(this, message)
+      this[`${publisher.id}_${message}_handler`] = checkType(handler,'function') ? handler : noop
+    }
     return this
   }
   /**
-   * 
+   * 解除订阅
    * @param {Publisher} publisher 发布者
    * @param {String} message 消息
    */
   unlisten(publisher, message, removeAll = true) {
-    publisher && publisher.removeListener(this, message, removeAll)
+    if (publisher instanceof Publish) { 
+      publisher._removeListener(this, message, removeAll)
+    }
     return this
   }
 }
@@ -46,11 +51,11 @@ class Publish {
     this.name = name
   }
   /**
-   * 
+   * 添加订阅者 内部方法
    * @param {Subscribe} subscriber 订阅者
    * @param {String} message 消息
    */
-  addListener(subscriber, message) { //添加消息订阅者
+  _addListener(subscriber, message) { //添加消息订阅者
     if (!subscriber) return false
     const existInWatcherList = this.watcherList.findIndex(exitSubscriber => exitSubscriber.id === subscriber.id)
     if (!message) { //若没有订阅任何消息 则认为是观察者模式
@@ -61,7 +66,7 @@ class Publish {
       }
 
       //并取消这个订阅者已经订阅的消息 但是不取消观察者模式关系
-      this.removeListener(subscriber, '', false)
+      this._removeListener(subscriber, '', false)
     } else { //订阅发布模式
       //已经是观察者情况下 不用再单独订阅消息
       if(existInWatcherList !== -1) return false
@@ -80,12 +85,12 @@ class Publish {
 
   }
   /**
-   * 
+   * 移除订阅者
    * @param {Subscribe} subscriber 
    * @param {String} message 
    * @param {Boolean} removeAll 删除 所有订阅列表和观察列表中的此订阅者
    */
-  removeListener(subscriber, message, removeAll = true) { //删除消息订阅者
+  _removeListener(subscriber, message, removeAll = true) { //删除消息订阅者
     if (!subscriber) return this
 
     //如果传了message只删除此message下的订阅关系，否则删除此订阅者的所有订阅关系
@@ -112,7 +117,7 @@ class Publish {
     return this
   }
   /**
-   * 
+   * 发布消息
    * @param {String} message 消息
    * @param {Object} info 内容
    */
