@@ -192,22 +192,28 @@
     };
     function toast(str) {
         var hintCon = '<div class="_toast">' + (str || "toast show~") + '</div>';
-        if ($$("_hintBox")) {
-            $$("_hintBox").classList.add("_toastBox");
-            $$("_hintBox").style.display = "block";
-            $$("_hintBox").innerHTML = hintCon;
+        if ($$("_toastBox")) {
+            $$("_toastBox").style.display = "block";
+            $$("_toastBox").innerHTML = hintCon;
         } else {
             var div = document.createElement("div");
-            div.setAttribute("id", "_hintBox");
+            div.setAttribute("id", "_toastBox");
             div.setAttribute("class", "_toastBox");
             div.innerHTML = hintCon;
             document.body.appendChild(div);
         }
+
+        setTimeout(() => {
+            $$("_toastBox").classList.remove("_hide");
+            $$("_toastBox").classList.add("_show");
+        })
+        
         clearTimeout(timer); clearTimeout(timerC);
         timer = null; timerC = null;
-        timer = setTimeout(() => {//显示1s后消失
-            $$("_hintBox").classList.add("_toastBox", "_hide");
-            timerC = setTimeout(() => { $$("_hintBox").style.display = "none"; }, 300);
+        timer = setTimeout(() => {//显示2s后消失
+            $$("_toastBox").classList.remove("_show");
+            $$("_toastBox").classList.add("_hide");
+            timerC = setTimeout(() => { $$("_toastBox").style.display = "none"; }, 300);
         }, 2000);
     };
     function loading() {
