@@ -28,8 +28,15 @@
         	bIsWM = sUserAgent.match(/windows mobile/i) == "windows mobile";
         return bIsIpad || bIsIphoneOs || bIsMidp || bIsUc7 || bIsUc || bIsAndroid || bIsCE || bIsWM
     }
+
+    window.onhashchange = function() {//监听hashchange
+        $$("popBox") && ($$("popBox").style.display = 'none')
+        if ($$(dftOpt.blurId)) {
+            $$(dftOpt.blurId).classList.remove("_blur");
+        }
+    };
     
-    window.onresize = () => {
+    window.onresize = function() {
         isMoile = _isMobile();
         $$("popBox") && addBind(dftOpt);
     }
@@ -72,7 +79,7 @@
 
         if (dftOpt.type === 'prompt') {
             conInfo = '<input id="_pop-con-input" class="_pop-con-input" type="text" placeholder="'+ dftOpt.placeholder +'" />'
-            setTimeout(() => { $$("_pop-con-input").focus() },30)
+            setTimeout(function() { $$("_pop-con-input").focus() },30)
         } else {
             conInfo = '<div class="_pop-con-text">' + dftOpt.content+ '</div>'
         }
@@ -100,12 +107,6 @@
         }
         
         $$(dftOpt.blurId) && $$(dftOpt.blurId).classList.add("_blur");
-        window.onhashchange = () => {//监听hashchange
-            $$("popBox").style.display = 'none';
-            if ($$(dftOpt.blurId)) {
-                $$(dftOpt.blurId).classList.remove("_blur");
-            }
-        };
         addBind(dftOpt);
     };
 
@@ -123,7 +124,7 @@
             if ($$(dftOpt.blurId)) {
                 $$(dftOpt.blurId).classList.remove("_blur") 
             };
-            setTimeout(() => {
+            setTimeout(function() {
                 $$("popBox").style.display = 'none';
                 $$("popBox").setAttribute("useable", true)
             }, 300);
@@ -150,7 +151,7 @@
     function addBind(opt) {
         if (bindAction) return; 
         if (isMoile) {
-            $$("popBox").addEventListener('touchstart', event => {
+            $$("popBox").addEventListener('touchstart', function(event) {
                 mouseOver = false;
                 if (event.target.id === "_confirm" || event.target.id === "_cancel") {
                     event.target.style.backgroundColor = opt.activebg;
@@ -159,7 +160,7 @@
                     $$("_cancel").style.backgroundColor = opt.bg;
                 }
             });
-            $$("popBox").addEventListener('touchmove', event => {
+            $$("popBox").addEventListener('touchmove', function(event) {
                 event.preventDefault();
                 if (event.target.id === "_confirm" || event.target.id === "_cancel") {
                     $$(event.target.id).style.backgroundColor = opt.bg;
@@ -168,7 +169,7 @@
             });
             $$("popBox").addEventListener('touchend', popHide);
         } else {
-            $$("popBox").addEventListener("mousemove", event => {
+            $$("popBox").addEventListener("mousemove", function(event) {
                 mouseOver = false;
                 if (event.target.id === "_confirm" || event.target.id === "_cancel") {
                     $$("_confirm").style.backgroundColor = opt.bg;
@@ -183,9 +184,9 @@
             $$("popBox").addEventListener('click', popHide);
         }
 
-        $$("popBox").addEventListener("keydown", e => {
-            if (e.keyCode == 13) {
-                popHide(e, true)
+        $$("popBox").addEventListener("keydown", function(event) {
+            if (event.keyCode == 13) {
+                popHide(event, true)
             }
         });
         bindAction = true;
@@ -203,23 +204,22 @@
             document.body.appendChild(div);
         }
 
-        setTimeout(() => {
+        setTimeout(function() {
             $$("_toastBox").classList.remove("_hide");
             $$("_toastBox").classList.add("_show");
         })
         
         clearTimeout(timer); clearTimeout(timerC);
         timer = null; timerC = null;
-        timer = setTimeout(() => {//显示2s后消失
+        timer = setTimeout(function() {//显示2s后消失
             $$("_toastBox").classList.remove("_show");
             $$("_toastBox").classList.add("_hide");
-            timerC = setTimeout(() => { $$("_toastBox").style.display = "none"; }, 300);
+            timerC = setTimeout(function() { $$("_toastBox").style.display = "none"; }, 300);
         }, 2000);
     };
     function loading() {
-        if (timerL) {
-            clearTimeout(timerL);
-        }
+        clearTimeout(timerL);
+
         if ($$("loadingBox")) {
             $$("loadingBox").style.display = "block";
             $$("loadingBox").classList.add("_loadingBox");
@@ -233,14 +233,14 @@
                             '</div>';
             document.body.appendChild(div);
         }
-        $$("loadingBox").addEventListener("touchmove", event => {
+        $$("loadingBox").addEventListener("touchmove", function(event) {
             event.preventDefault();
         });
     }
     function loadingClose() {
         if (!$$("loadingBox")) return false;
         $$("loadingBox").classList.add("_loadingBox", "_hide");
-        timerL = setTimeout(() => { $$("loadingBox").style.display = "none"; }, 300);
+        timerL = setTimeout(function() { $$("loadingBox").style.display = "none"; }, 300);
     }
 
     return {
