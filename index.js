@@ -218,7 +218,7 @@ new Vue({
             Popop.toast(`再通知'${msg}'的订阅列表`);
             this.$set(puber, 'subBlink', msg);
           }
-        }, duration + 100)
+        }, duration * 2)
       } else if(hasMsg) {
         //订阅者集合收到对应消息 闪动
         this.$set(puber, 'subBlink', msg);
