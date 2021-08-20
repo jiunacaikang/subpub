@@ -22,8 +22,7 @@ class Subscribe {
     //可能存在对不同发布者订阅相同的消息
     //回调函数要跟发布者id绑定 来区分不同发布者
     if (publisher instanceof Publish) {
-      publisher._addListener(this, message)
-      this[`${publisher.id}_${message}_handler`] = checkType(handler,'function') ? handler : noop
+      publisher._addListener(this, message, handler)
     }
     return this
   }
@@ -55,14 +54,23 @@ class Publish {
    * @param {Subscribe} subscriber 订阅者
    * @param {String} message 消息
    */
-  _addListener(subscriber, message) { //添加消息订阅者
+  _addListener(subscriber, message, handler) { //添加消息订阅者
+    handler = checkType(handler, 'function') ? handler : noop
     if (!subscriber) return false
+
+    //要添加到列表的订阅者包裹对象
+    const suberObj = {
+      ...subscriber,
+      suber: subscriber,
+      handler: handler
+    }
+
     const existInWatcherList = this.watcherList.findIndex(exitSubscriber => exitSubscriber.id === subscriber.id)
     if (!message) { //若没有订阅任何消息 则认为是观察者模式
       if (existInWatcherList === -1) {//观察者列表中不存在此订阅者
-        this.watcherList.push(subscriber)
+        this.watcherList.push(suberObj)
       } else {
-        this.watcherList[existInWatcherList] = subscriber;
+        this.watcherList[existInWatcherList] = suberObj;
       }
 
       //并取消这个订阅者已经订阅的消息 但是不取消观察者模式关系
@@ -77,9 +85,9 @@ class Publish {
   
       const existIndex = this.messageMap[message].findIndex(exitSubscriber => exitSubscriber.id === subscriber.id)
       if (existIndex === -1) {//不存在这个订阅者时添加
-        this.messageMap[message].push(subscriber)
+        this.messageMap[message].push(suberObj)
       } else {//存在这个订阅者时更新回调handler
-        this.messageMap[message][existIndex][`${this.id}_${message}_handler`] = subscriber[`${this.id}_${message}_handler`]
+        this.messageMap[message][existIndex] = suberObj
       }
     }
 
@@ -124,14 +132,16 @@ class Publish {
   publish(message, info) { //发布通知
     //观察者模式 执行回调
     this.watcherList.forEach(watcher => {
-      watcher[`${this.id}__handler`](info)
+      //watcher[`${this.id}__handler`](info)
+      watcher[`handler`].call(watcher.suber, info)
     })
 
     if (message) {//执行此消息下的订阅者回调
       const subscribers = this.messageMap[message]
       if (subscribers && subscribers.length) {
         subscribers.forEach(subscriber => {
-          subscriber[`${this.id}_${message}_handler`](info)
+          //subscriber[`${this.id}_${message}_handler`](info)
+          subscriber[`handler`].call(subscriber.suber, info)
         })
       }
     } 

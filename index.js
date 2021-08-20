@@ -1,8 +1,8 @@
-const duration = 300;
-
 String.prototype.trim = function () {
   return this.replace(/(^\s*)|(\s*$)/g, "");
 }
+const duration = 300;
+
 
 new Vue({
   el: '#app',
@@ -22,14 +22,18 @@ new Vue({
   },
   mounted() {
     this.prompt = Popop.prompt.bind(this);
-    return false
-    for (var i = 0; i < 2; i++) {
+    //return false
+    for (var i = 0; i < 3; i++) {
       if (i < 1) {
         this.pubers.push(new Publish('pub' + i))
       }
-      this.subers.push(new Subscribe('sub' + i))
-      this.doListen(this.subers[i], this.pubers[0], 'asdafla')
-      this.doListen(this.subers[i], this.pubers[0], '胜多负少')
+      this.subers.push(new Subscribe('sub' + i));
+
+      ['msg0', 'msg1'].forEach(msg => {
+        this.doListen(this.subers[i], this.pubers[0], msg, info => {
+          console.log(info)
+        })
+      })
     }
 
   },
@@ -137,6 +141,7 @@ new Vue({
           suber.listen({ publisher: puber, message: msg, handler });
         }, duration)
       }
+      
       this.resetSuber();
     },
 
